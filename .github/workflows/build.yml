@@ -23,7 +23,7 @@ jobs:
 
       - name: Fetch and build Skia
         run: |
-          git clone https://github.com/aseprite/skia.git --depth=1 --branch aseprite-m93
+          git clone https://github.com/aseprite/skia.git --depth=1 --branch aseprite-m124
           cd skia
           python3 tools/git-sync-deps
           bin/gn gen out/Release-x64 --args='
