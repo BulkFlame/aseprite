@@ -10,6 +10,8 @@ jobs:
     steps:
       - name: Checkout repo
         uses: actions/checkout@v3
+        with:
+          submodules: recursive  # ✅ This is critical to fetch Skia
 
       - name: Install dependencies
         run: |
@@ -17,9 +19,6 @@ jobs:
           sudo apt install -y cmake ninja-build g++ clang python3 git \
             libx11-dev libxcursor-dev libxi-dev libgl1-mesa-dev \
             libfontconfig1-dev libcurl4-openssl-dev libfreetype6-dev
-
-      - name: Init submodules
-        run: git submodule update --init --recursive
 
       - name: Build Skia
         run: |
