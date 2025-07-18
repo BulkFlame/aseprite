@@ -14,12 +14,8 @@ jobs:
       - name: Install dependencies
         run: |
           sudo apt update
-          sudo apt install -y \
-            cmake ninja-build g++ \
-            libx11-dev libxcursor-dev libxi-dev \
-            libgl1-mesa-dev libfontconfig1-dev \
-            libcurl4-openssl-dev libfreetype6-dev \
-            python3 git
+          sudo apt install -y cmake ninja-build g++ libx11-dev libxcursor-dev libxi-dev libgl1-mesa-dev \
+            libfontconfig1-dev libcurl4-openssl-dev libfreetype6-dev libpthread-stubs0-dev
 
       - name: Fetch and build Skia
         run: |
