@@ -23,8 +23,8 @@ jobs:
       - name: Build Aseprite
         run: |
           mkdir build && cd build
-          cmake -DCMAKE_BUILD_TYPE=RelWithDebInfo -DLAF_BACKEND=skia -DSKIA_DIR=../third_party/skia -DSKIA_LIBRARY_DIR=../third_party/skia/out/Release-x64 -DSKIA_LIBRARY=../third_party/skia/out/Release-x64/libskia.a ..
-          make -j$(nproc)
+          cmake -G Ninja -DCMAKE_BUILD_TYPE=RelWithDebInfo -DLAF_BACKEND=skia -DSKIA_DIR=../third_party/skia -DSKIA_LIBRARY_DIR=../third_party/skia/out/Release-x64 -DSKIA_LIBRARY=../third_party/skia/out/Release-x64/libskia.a ..
+          ninja
 
       - name: Upload binary
         uses: actions/upload-artifact@v4
