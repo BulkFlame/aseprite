@@ -6,24 +6,51 @@ on:
 jobs:
   build-linux:
     runs-on: ubuntu-latest
+
     steps:
       - name: Checkout repo
         uses: actions/checkout@v3
-        with:
-          submodule: recursive
 
       - name: Install dependencies
         run: |
           sudo apt update
-          sudo apt install -y cmake ninja-build g++ libx11-dev libxcursor-dev libxi-dev libgl1-mesa-dev libfontconfig1-dev libcurl4-openssl-dev libfreetype6-dev
+          sudo apt install -y cmake ninja-build g++ clang python3 git \
+            libx11-dev libxcursor-dev libxi-dev libgl1-mesa-dev \
+            libfontconfig1-dev libcurl4-openssl-dev libfreetype6-dev
 
       - name: Init submodules
         run: git submodule update --init --recursive
 
+      - name: Build Skia
+        run: |
+          cd third_party/skia
+          python3 tools/git-sync-deps
+          bin/gn gen out/Release-x64 --args='
+            is_official_build=true
+            is_component_build=false
+            skia_use_system_expat=false
+            skia_use_system_libjpeg_turbo=false
+            skia_use_system_libpng=false
+            skia_use_system_zlib=false
+            skia_use_system_icu=false
+            skia_use_system_harfbuzz=false
+            skia_use_system_freetype2=false
+            skia_use_fontconfig=true
+            target_cpu="x64"
+            cc="clang"
+            cxx="clang++"
+          '
+          ninja -C out/Release-x64 skia
+
       - name: Build Aseprite
         run: |
           mkdir build && cd build
-          cmake -G Ninja -DCMAKE_BUILD_TYPE=RelWithDebInfo -DLAF_BACKEND=skia -DSKIA_DIR=../third_party/skia -DSKIA_LIBRARY_DIR=../third_party/skia/out/Release-x64 -DSKIA_LIBRARY=../third_party/skia/out/Release-x64/libskia.a ..
+          cmake -G Ninja -DCMAKE_BUILD_TYPE=RelWithDebInfo \
+                -DLAF_BACKEND=skia \
+                -DSKIA_DIR=../third_party/skia \
+                -DSKIA_LIBRARY_DIR=../third_party/skia/out/Release-x64 \
+                -DSKIA_LIBRARY=../third_party/skia/out/Release-x64/libskia.a \
+                ..
           ninja
 
       - name: Upload binary
